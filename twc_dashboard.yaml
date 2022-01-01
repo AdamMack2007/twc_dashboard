@@ -1,0 +1,429 @@
+apiVersion: influxdata.com/v2alpha1
+kind: Variable
+metadata:
+    name: wizardly-northcutt-83c00b
+spec:
+    associations:
+      - kind: Label
+        name: frosty-hamilton-83c001
+    name: kwh_price
+    description: Price per kilowatt-hour
+    selected:
+      - "0.06"
+    type: constant
+    values:
+      - "0.06"
+---
+apiVersion: influxdata.com/v2alpha1
+kind: Label
+metadata:
+    name: frosty-hamilton-83c001
+spec:
+    color: '#0b3a8d'
+    name: wall-connector
+    description: Tesla wall connector label used across the InfluxDB stack
+---
+apiVersion: influxdata.com/v2alpha1
+kind: Bucket
+metadata:
+    name: busy-bhaskara-83c005
+spec:
+    associations:
+      - kind: Label
+        name: frosty-hamilton-83c001
+    name: tesla
+    description: Bucket to store the Tesla Wall Connector metrics
+    retentionRules:
+      - everySeconds: 2.592e+06
+        type: expire
+---
+apiVersion: influxdata.com/v2alpha1
+kind: Dashboard
+metadata:
+    name: realistic-rosalind-83c001
+spec:
+    associations:
+      - kind: Label
+        name: frosty-hamilton-83c001
+    charts:
+      - colors:
+          - hex: '#00C9FF'
+            id: base
+            name: laser
+            type: text
+        decimalPlaces: 2
+        height: 1
+        kind: Single_Stat
+        name: Total Energy Cost
+        prefix: $
+        queries:
+          - query: "import \"math\"\nfrom(bucket: \"tesla\")\n  |> range(start: v.timeRangeStart,
+                stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"]
+                == \"http\")\n  |> filter(fn: (r) => r[\"_field\"] == \"energy_wh\")\n
+                \ |> group()\n  |> last()\n  |> map(fn: (r) => ({ \n    r with \n
+                \   _value: r._value / 1000.00 * float(v: v.kwh_price)\n    })\n  )"
+        staticLegend: {}
+        width: 2
+      - colors:
+          - hex: '#00C9FF'
+            id: base
+            name: laser
+            type: text
+        decimalPlaces: 2
+        height: 1
+        kind: Single_Stat
+        name: Session Cost
+        prefix: $
+        queries:
+          - query: "import \"math\"\nfrom(bucket: \"tesla\")\n  |> range(start: v.timeRangeStart,
+                stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"]
+                == \"http\")\n  |> filter(fn: (r) => r[\"_field\"] == \"session_energy_wh\")\n
+                \ |> group()\n  |> last()\n  |> map(fn: (r) => ({ \n    r with \n
+                \   _value: r._value / 1000.00 * float(v: v.kwh_price)\n    })\n  )"
+        staticLegend: {}
+        width: 2
+        yPos: 1
+      - colors:
+          - hex: '#00C9FF'
+            id: base
+            name: laser
+            type: text
+        decimalPlaces: 0
+        height: 1
+        kind: Single_Stat
+        name: PCBA Temp
+        queries:
+          - query: |-
+                from(bucket: "tesla")
+                  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+                  |> filter(fn: (r) => r["_measurement"] == "http")
+                  |> filter(fn: (r) => r["_field"] == "pcba_temp_c")
+                  |> group()
+                  |> last()
+        staticLegend: {}
+        suffix: ' C'
+        width: 2
+        yPos: 2
+      - axes:
+          - base: "10"
+            name: x
+            scale: linear
+          - base: "10"
+            name: "y"
+            scale: linear
+            suffix: ' amps'
+        colorizeRows: true
+        colors:
+          - hex: '#31C0F6'
+            id: d58d388e-a88c-48da-8cbf-11479103adfd
+            name: Nineteen Eighty Four
+            type: scale
+          - hex: '#A500A5'
+            id: 2be1cf43-f8c1-40a2-8c98-3ffa00de391d
+            name: Nineteen Eighty Four
+            type: scale
+          - hex: '#FF7E27'
+            id: 2e354eab-5174-421d-bac4-84cadf21c1ab
+            name: Nineteen Eighty Four
+            type: scale
+        geom: line
+        height: 5
+        hoverDimension: auto
+        kind: Xy
+        legendColorizeRows: true
+        legendOpacity: 1
+        legendOrientationThreshold: 1e+08
+        name: Current
+        opacity: 1
+        orientationThreshold: 1e+08
+        position: overlaid
+        queries:
+          - query: |-
+                from(bucket: "tesla")
+                  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+                  |> filter(fn: (r) => r["_measurement"] == "http")
+                  |> filter(fn: (r) => r["_field"] == "currentA_a" or r["_field"] == "currentB_a" or r["_field"] == "currentC_a" or r["_field"] == "currentN_a")
+        staticLegend:
+            colorizeRows: true
+            opacity: 1
+            orientationThreshold: 1e+08
+            widthRatio: 1
+        width: 12
+        widthRatio: 1
+        xCol: _time
+        yCol: _value
+        yPos: 3
+      - axes:
+          - base: "10"
+            name: x
+            scale: linear
+          - base: "10"
+            name: "y"
+            scale: linear
+            suffix: V
+        colorizeRows: true
+        colors:
+          - hex: '#31C0F6'
+            id: d58d388e-a88c-48da-8cbf-11479103adfd
+            name: Nineteen Eighty Four
+            type: scale
+          - hex: '#A500A5'
+            id: 2be1cf43-f8c1-40a2-8c98-3ffa00de391d
+            name: Nineteen Eighty Four
+            type: scale
+          - hex: '#FF7E27'
+            id: 2e354eab-5174-421d-bac4-84cadf21c1ab
+            name: Nineteen Eighty Four
+            type: scale
+        geom: line
+        height: 5
+        heightRatio: 0.18301435406698566
+        hoverDimension: auto
+        kind: Xy
+        legendColorizeRows: true
+        legendOpacity: 1
+        legendOrientationThreshold: 1e+08
+        name: Volts
+        opacity: 1
+        orientationThreshold: 1e+08
+        position: overlaid
+        queries:
+          - query: |-
+                from(bucket: "tesla")
+                  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+                  |> filter(fn: (r) => r["_measurement"] == "http")
+                  |> filter(fn: (r) => r["_field"] == "voltageA_v" or r["_field"] == "voltageB_v" or r["_field"] == "voltageC_v")
+        staticLegend:
+            colorizeRows: true
+            heightRatio: 0.18301435406698566
+            opacity: 1
+            orientationThreshold: 1e+08
+            widthRatio: 1
+        width: 12
+        widthRatio: 1
+        xCol: _time
+        yCol: _value
+        yPos: 8
+      - colors:
+          - hex: '#00C9FF'
+            id: base
+            name: laser
+            type: text
+        decimalPlaces: 2
+        height: 1
+        kind: Single_Stat
+        name: Total Energy KWh
+        queries:
+          - query: "from(bucket: \"tesla\")\n  |> range(start: v.timeRangeStart, stop:
+                v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"http\")\n
+                \ |> filter(fn: (r) => r[\"_field\"] == \"energy_wh\")\n  |> group()\n
+                \ |> last()\n  |> map(fn: (r) => ({ \n    r with \n    _value: r._value
+                / 1000.00\n    })\n  )"
+        staticLegend: {}
+        suffix: ' KWh'
+        width: 2
+        xPos: 2
+      - colors:
+          - hex: '#00C9FF'
+            id: base
+            name: laser
+            type: text
+        decimalPlaces: 2
+        height: 1
+        kind: Single_Stat
+        name: Session Energy
+        queries:
+          - query: |-
+                from(bucket: "tesla")
+                  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+                  |> filter(fn: (r) => r["_measurement"] == "http")
+                  |> filter(fn: (r) => r["_field"] == "session_energy_wh")
+                  |> group()
+                  |> last()
+        staticLegend: {}
+        suffix: ' watts'
+        width: 2
+        xPos: 2
+        yPos: 1
+      - colors:
+          - hex: '#00C9FF'
+            id: base
+            name: laser
+            type: text
+        decimalPlaces: 0
+        height: 1
+        kind: Single_Stat
+        name: MCU Temp
+        queries:
+          - query: |-
+                from(bucket: "tesla")
+                  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+                  |> filter(fn: (r) => r["_measurement"] == "http")
+                  |> filter(fn: (r) => r["_field"] == "mcu_temp_c")
+                  |> group()
+                  |> last()
+        staticLegend: {}
+        suffix: ' C'
+        width: 2
+        xPos: 2
+        yPos: 2
+      - colors:
+          - hex: '#00C9FF'
+            id: base
+            name: laser
+            type: text
+        decimalPlaces: 2
+        height: 2
+        kind: Single_Stat
+        name: Charging State
+        queries:
+          - query: "from(bucket: \"tesla\")\n  |> range(start: v.timeRangeStart, stop:
+                v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"http\")\n
+                \ |> filter(fn: (r) => r[\"_field\"] == \"contactor_closed\")\n  |>
+                group()\n  |> last()\n  |> map(fn: (r) => ({ \n    r with \n    State:
+                if r._value == true then \"Charging\" else \"Completed\"\n    })\n
+                \ )\n  |> keep(columns: [\"State\"])"
+        staticLegend: {}
+        width: 2
+        xPos: 4
+      - colors:
+          - hex: '#00C9FF'
+            id: base
+            name: laser
+            type: text
+        decimalPlaces: 0
+        height: 1
+        kind: Single_Stat
+        name: Handle Temp
+        queries:
+          - query: |-
+                from(bucket: "tesla")
+                  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+                  |> filter(fn: (r) => r["_measurement"] == "http")
+                  |> filter(fn: (r) => r["_field"] == "handle_temp_c")
+                  |> group()
+                  |> last()
+        staticLegend: {}
+        suffix: ' C'
+        width: 2
+        xPos: 4
+        yPos: 2
+      - colors:
+          - hex: '#00C9FF'
+            id: base
+            name: laser
+            type: text
+        decimalPlaces: 2
+        height: 2
+        kind: Single_Stat
+        name: Connection
+        queries:
+          - query: "from(bucket: \"tesla\")\n  |> range(start: v.timeRangeStart, stop:
+                v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"http\")\n
+                \ |> filter(fn: (r) => r[\"_field\"] == \"vehicle_connected\")\n  |>
+                group()\n  |> last()\n  |> map(fn: (r) => ({ \n    r with \n    State:
+                if r._value == true then \"Connected\" else \"Disconnected\"\n    })\n
+                \ )\n  |> keep(columns: [\"State\"])"
+        staticLegend: {}
+        width: 2
+        xPos: 6
+      - colors:
+          - hex: '#00C9FF'
+            id: base
+            name: laser
+            type: text
+        decimalPlaces: 0
+        height: 1
+        kind: Single_Stat
+        name: Charging Cycles
+        queries:
+          - query: |-
+                from(bucket: "tesla")
+                  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+                  |> filter(fn: (r) => r["_measurement"] == "http")
+                  |> filter(fn: (r) => r["_field"] == "connector_cycles")
+                  |> group()
+                  |> last()
+        staticLegend: {}
+        width: 2
+        xPos: 6
+        yPos: 2
+      - colors:
+          - hex: '#00C9FF'
+            id: base
+            name: laser
+            type: text
+        decimalPlaces: 2
+        height: 2
+        kind: Single_Stat
+        name: Current
+        queries:
+          - query: |-
+                from(bucket: "tesla")
+                  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+                  |> filter(fn: (r) => r["_measurement"] == "http")
+                  |> filter(fn: (r) => r["_field"] == "vehicle_current_a")
+                  |> group()
+                  |> last()
+        staticLegend: {}
+        suffix: ' amps'
+        width: 2
+        xPos: 8
+      - colors:
+          - hex: '#00C9FF'
+            id: base
+            name: laser
+            type: text
+        decimalPlaces: 0
+        height: 1
+        kind: Single_Stat
+        name: Alerts
+        queries:
+          - query: |-
+                from(bucket: "tesla")
+                  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+                  |> filter(fn: (r) => r["_measurement"] == "http")
+                  |> filter(fn: (r) => r["_field"] == "alert_count")
+                  |> group()
+                  |> last()
+        staticLegend: {}
+        width: 2
+        xPos: 8
+        yPos: 2
+    description: Dashboard that displays the Tesla Wall Connector metrics
+    name: Tesla Wall Connector
+---
+apiVersion: influxdata.com/v2alpha1
+kind: Telegraf
+metadata:
+    name: teslawallconnector-telegraf
+spec:
+    associations:
+      - kind: Label
+        name: frosty-hamilton-83c001
+    config: |
+      [global_tags]
+        instrument = "wall-connector"
+      [agent]
+        interval = "60s"
+        round_interval = true
+        metric_batch_size = 1000
+        metric_buffer_limit = 10000
+        collection_jitter = "0s"
+        flush_interval = "30s"
+        flush_jitter = "0s"
+        omit_hostname = true
+      [[inputs.http]]
+        urls = ["http://$TWC_HOST/api/1/vitals", "http://$TWC_HOST/api/1/lifetime"]
+        method = "GET"
+        data_format = "json"
+        json_string_fields = ["contactor_closed", "vehicle_connected"]
+        tagexclude = ["url"]
+      [[outputs.influxdb_v2]]
+        urls = ["$INFLUX_HOST"]
+        token = "$INFLUX_TOKEN"
+        organization = "$INFLUX_ORG"
+        bucket = "tesla"
+        timeout = "10s"
+    name: TeslaWallConnector
+    description: Telegraf configuration to collect Tesla Wall Connector metrics
